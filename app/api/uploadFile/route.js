@@ -3,7 +3,7 @@ import fs from "fs";
 import { pipeline } from "stream";
 import { promisify } from "util";
 import path from "path";
-import { transcribeImage } from "/app/inputconvert/imagetotext";  // Import the transcription function
+import { transcribeImage } from "/app/inputconvert/imagetotext"; // Import the transcription function
 
 const pump = promisify(pipeline);
 
@@ -21,9 +21,9 @@ export async function POST(req) {
 
     // Call the transcribeImage function after saving the file
     const transcriptionResult = await transcribeImage(filePath);
-    console.log(transcriptionResult)
 
-    return NextResponse.json({ status: "success", data: transcriptionResult });
+    // Return only the transcription text
+    return NextResponse.json({ status: "success", text: transcriptionResult });
   } catch (error) {
     console.error("File upload error:", error);
     return NextResponse.json({ status: "fail", data: error.message });
