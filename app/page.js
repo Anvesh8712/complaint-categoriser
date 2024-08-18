@@ -1,4 +1,3 @@
-// src/App.js
 import React from "react";
 import ComplaintForm from "./components/ComplaintForm";
 
@@ -11,8 +10,8 @@ export default function Home() {
       </header>
       <main>
         <div className="card">
-          <h2>Instruction</h2>
-          <p>Write down the complaint and we'll categorize the complaint</p>
+          <h2>Instructions</h2>
+          <p>Write down the complaint, and we'll categorize it for you.</p>
         </div>
         <ComplaintForm />
       </main>
