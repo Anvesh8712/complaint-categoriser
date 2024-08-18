@@ -10,10 +10,15 @@ Prerequisites
 Before starting, ensure you have the following API keys ready:
 
 OPENAI_API_KEY
+
 HUGGING_FACE_KEY
+
 PINECONE_API_KEY
+
 PINECONE_ENVIRONMENT
+
 NEXT_PUBLIC_SUPABASE_URL
+
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 ## Installation
@@ -29,12 +34,18 @@ npm run dev
 
 ## Usage
 Set up environment variables: Ensure all required API keys are stored in a .env.local file.
+
 Upload Complaints: Use the interface to upload an image or text related to a credit card complaint.
+
 Receive Categorization: The system will return a categorized response based on embedding similarity.
 
 ## Tech Stack
 Frontend: Next.js, React.js
+
 Backend: Node.js, Supabase
+
 AI & Embeddings: OpenAI, Hugging Face
+
 Vector Search: Pinecone
+
 Deployment: Vercel
