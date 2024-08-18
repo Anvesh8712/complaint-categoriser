@@ -17,7 +17,7 @@ export async function POST(request) {
       );
     }
 
-    // Define the system prompt with Topic, Subtopic, and a brief Summary
+    // Define the system prompt with JSON output format and error handling
     const systemPrompt = `
       You are an AI assistant that categorizes consumer complaints into relevant categories and provides concise summaries. Given a complaint, please follow these steps:
 
@@ -41,16 +41,19 @@ export async function POST(request) {
    - Unable to get your credit report or credit score
 4. Provide a brief and concise summary of the complaint, no longer than one sentence.
 
+Return the output in JSON format with the following keys and dont return anything else:
+{
+  "product": "[Category of the complaint]",
+  "sub_product": "[Subcategory of the complaint]",
+  "issue": "[Issue from the list]",
+  "summary": "[Brief summary of the complaint]"
+}
+
+If any of the fields are missing, return an error message indicating the missing field(s).
+
 Here is the complaint:
 
 "${complaint}"
-
-Please respond with the following format:
-- Product: [Category of the complaint]
-- Sub-product: [Subcategory of the complaint]
-- Issue: [Issue from the list]
-- Summary: [Brief summary of the complaint, no longer than one sentence]
-
     `;
 
     // Call the OpenAI API to categorize the complaint
@@ -61,7 +64,34 @@ Please respond with the following format:
 
     const responseMessage = completion.choices[0].message.content;
 
-    return NextResponse.json({ responseMessage });
+    // Parse the response as JSON
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(responseMessage);
+      console.log("parsed message", parsedResponse);
+    } catch (parseError) {
+      console.error("Failed to parse JSON from OpenAI response:", parseError);
+      return NextResponse.json(
+        { error: "Failed to parse response as JSON" },
+        { status: 500 }
+      );
+    }
+
+    // Check if all required fields are present
+    const requiredFields = ["product", "sub_product", "issue", "summary"];
+    const missingFields = requiredFields.filter(
+      (field) => !(field in parsedResponse)
+    );
+
+    if (missingFields.length > 0) {
+      return NextResponse.json(
+        { error: `Missing fields: ${missingFields.join(", ")}` },
+        { status: 400 }
+      );
+    }
+
+    // Return the structured response
+    return NextResponse.json(parsedResponse);
   } catch (error) {
     console.error("Error categorizing complaint:", error);
     return NextResponse.json(
