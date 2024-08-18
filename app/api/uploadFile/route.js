@@ -3,7 +3,8 @@ import fs from "fs";
 import { pipeline } from "stream";
 import { promisify } from "util";
 import path from "path";
-import { transcribeImage } from "/app/inputconvert/imagetotext";  // Import the transcription function
+import { transcribeImage } from "/app/inputconvert/imagetotext";  
+import { transcribeAudio } from "/app/inputconvert/voicetotext";  // Import the audio transcription function
 
 const pump = promisify(pipeline);
 
@@ -19,9 +20,15 @@ export async function POST(req) {
     const filePath = `./public/file/${file.name}`;
     await pump(file.stream(), fs.createWriteStream(filePath));
 
-    // Call the transcribeImage function after saving the file
-    const transcriptionResult = await transcribeImage(filePath);
-    console.log(transcriptionResult)
+    let transcriptionResult;
+
+    if (file.type.startsWith("image/")) {
+      transcriptionResult = await transcribeImage(filePath); // Transcribe image
+    } else if (file.type === "audio/mpeg") {
+      transcriptionResult = await transcribeAudio(filePath); // Transcribe audio
+    } else {
+      throw new Error("Unsupported file type.");
+    }
 
     return NextResponse.json({ status: "success", data: transcriptionResult });
   } catch (error) {

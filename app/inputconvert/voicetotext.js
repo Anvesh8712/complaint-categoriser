@@ -1,15 +1,16 @@
+// voicetotext.js
 const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 
 // Replace with your OpenAI API key
-const apiKey = 'key';
+const apiKey = process.env.local;
 
-async function transcribeAudio() {
+async function transcribeAudio(filePath) { // Accept file path as a parameter
     try {
         // Create a form data object
         const formData = new FormData();
-        formData.append('file', fs.createReadStream('sample.mp3'));
+        formData.append('file', fs.createReadStream(filePath)); // Use the file path provided
         formData.append('model', 'whisper-1');
 
         // Make the POST request to OpenAI's Whisper API
@@ -20,13 +21,11 @@ async function transcribeAudio() {
             },
         });
 
-        // Save the transcribed text to a file
-        fs.writeFileSync('transcription_output.txt', response.data.text);
-        console.log('Transcription saved to transcription_output.txt');
+        return response.data.text; // Return the transcribed text
     } catch (error) {
         console.error('Error transcribing audio:', error.response ? error.response.data : error.message);
+        throw error;
     }
 }
 
-// Call the function
-transcribeAudio();
+module.exports = { transcribeAudio };
