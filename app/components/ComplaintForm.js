@@ -418,7 +418,7 @@ export default function ComplaintForm() {
       console.log("File upload response:", data);
 
       // Assuming the server returns the converted text in the 'text' field
-      setComplaint(data.text);
+      setComplaint(data.text); // Automatically fill the TextField with the result
       setError("File uploaded and converted successfully!");
     } catch (err) {
       console.error("Error uploading file:", err);
