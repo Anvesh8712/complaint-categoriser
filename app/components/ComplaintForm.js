@@ -417,7 +417,9 @@ export default function ComplaintForm() {
       const data = await response.json();
       console.log("File upload response:", data);
 
-      setError("File uploaded successfully!");
+      // Assuming the server returns the converted text in the 'text' field
+      setComplaint(data.text);
+      setError("File uploaded and converted successfully!");
     } catch (err) {
       console.error("Error uploading file:", err);
       setError("Error uploading file.");
@@ -500,7 +502,7 @@ export default function ComplaintForm() {
           rows={4}
           value={complaint}
           onChange={(e) => setComplaint(e.target.value)}
-          disabled={!!file} // Disable input if a file is selected
+          disabled={!!file && !complaint} // Disable input if a file is selected and not yet processed
         />
 
         {/* File Upload and Categorize Section */}
@@ -527,7 +529,7 @@ export default function ComplaintForm() {
             variant="contained"
             color="primary"
             onClick={handleFileUpload}
-            disabled={!file} // Disable if no file is selected
+            disabled={!file || !!complaint} // Disable if no file is selected or text already set
           >
             Upload
           </Button>
@@ -535,7 +537,7 @@ export default function ComplaintForm() {
             variant="contained"
             color="secondary"
             type="submit"
-            disabled={!!file} // Disable categorization if a file is selected
+            disabled={!complaint} // Enable categorization only if complaint text is available
           >
             Categorize Complaint
           </Button>
